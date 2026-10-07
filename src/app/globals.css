@@ -1,26 +1,286 @@
 @import "tailwindcss";
 
+/*
+  Layout: full-bleed silk colour fields stacked like the panels of a deel,
+  content in a 76rem column, with алхан хээ bands as the seams between them.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --bg: #f4f5fb;
+  --surface: #ffffff;
+  --ink: #12163a;
+  --muted: #545a7e;
+  --line: #dcdfee;
+  --accent: #2147c9;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Silk swatches stay the same in both themes: they are the fabric. */
+  --khukh: #2147c9;
+  --ulaan: #d3302a;
+  --shar: #f2b01e;
+  --nogoon: #0f8a5c;
+  --yagaan: #cf2f7c;
+  --shunu: #10143a;
+  --on-shar: #1a1633;
+
+  --khee-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 22'%3E%3Cpath d='M0 20.5H24M2 20.5V1.5H20V15H7V6.5H14.5V11' fill='none' stroke='%23000' stroke-width='2.6'/%3E%3C/svg%3E");
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg: #0b0e26;
+    --surface: #151a3a;
+    --ink: #eceefa;
+    --muted: #a3a8c8;
+    --line: #272d57;
+    --accent: #93a8ff;
+    --shunu: #070a22;
+    color-scheme: dark;
   }
 }
 
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-khukh: var(--khukh);
+  --color-ulaan: var(--ulaan);
+  --color-shar: var(--shar);
+  --color-nogoon: var(--nogoon);
+  --color-yagaan: var(--yagaan);
+  --color-shunu: var(--shunu);
+  --color-on-shar: var(--on-shar);
+  --font-display: var(--font-unbounded), "Arial Black", system-ui, sans-serif;
+  --font-sans: var(--font-onest), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mongol: var(--font-noto-mongolian), "Mongolian Baiti", serif;
+}
+
+@utility shell {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+section[id] {
+  scroll-margin-top: 4.5rem;
+}
+
+/* Classical Mongolian is written top to bottom, columns left to right. */
+.mongol-script {
+  writing-mode: vertical-lr;
+  font-family: var(--font-mongol);
+}
+
+/* Footnote pills that link to the numbered reference list. */
+.cite {
+  position: relative;
+  top: -0.45em;
+  margin-inline-start: 0.2em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+.cite a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  padding-inline: 0.3rem;
+  border-radius: 9999px;
+  background: color-mix(in oklab, currentColor 16%, transparent);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+  transition: background-color 0.2s ease;
+}
+
+.cite a:hover,
+.cite a:focus-visible {
+  background: color-mix(in oklab, currentColor 30%, transparent);
+}
+
+[id^="src-"] {
+  scroll-margin-top: 6rem;
+}
+
+[id^="src-"]:target {
+  background: color-mix(in oklab, var(--shar) 22%, transparent);
+}
+
+/* Reading progress along the bottom edge of the sticky header. */
+.read-progress {
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--shar);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+@supports (animation-timeline: scroll()) {
+  .read-progress {
+    animation: read-progress linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+@keyframes read-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+/* Алхан хээ: the meander band used as a seam. Colour comes from `color`. */
+.khee {
+  height: 1.375rem;
+  background-color: currentColor;
+  -webkit-mask: var(--khee-mask) repeat-x left center / 1.5rem 1.375rem;
+  mask: var(--khee-mask) repeat-x left center / 1.5rem 1.375rem;
+}
+
+/* Hero sky: a gold sun setting off the bottom edge and a small pink moon. */
+.hero-sun {
+  position: absolute;
+  right: -11rem;
+  bottom: -13rem;
+  width: 32rem;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: var(--shar);
+  box-shadow:
+    0 0 0 2.25rem color-mix(in oklab, var(--shar) 30%, transparent),
+    0 0 0 4.5rem color-mix(in oklab, var(--shar) 14%, transparent);
+}
+
+.hero-moon {
+  position: absolute;
+  top: 2.5rem;
+  right: 6%;
+  width: 5.5rem;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: var(--yagaan);
+  box-shadow: inset -1.4rem 0.6rem 0 color-mix(in oklab, var(--khukh) 55%, transparent);
+}
+
+.studio-stage {
+  background-image: radial-gradient(
+    circle at 50% 46%,
+    color-mix(in oklab, var(--shar) 30%, transparent) 0 58%,
+    transparent 58.5%
+  );
+}
+
+.anatomy-stage {
+  background-image:
+    radial-gradient(circle at 50% 45%, rgb(255 255 255 / 0.08) 0 40%, transparent 40.5%),
+    radial-gradient(circle at 50% 45%, rgb(255 255 255 / 0.04) 0 56%, transparent 56.5%);
+}
+
+.deel-part {
+  transition:
+    opacity 0.35s ease,
+    filter 0.35s ease;
+}
+
+.deel-part :is(path, rect) {
+  transition:
+    fill 0.45s ease,
+    stroke 0.45s ease;
+}
+
+.deel-part[data-state="dim"] {
+  opacity: 0.22;
+}
+
+.deel-part[data-state="dim"]:hover {
+  opacity: 0.55;
+}
+
+.deel-part[data-state="active"] {
+  filter: drop-shadow(0 0 10px rgb(255 214 102 / 0.85));
+}
+
+.deel-ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ping 1.8s ease-out infinite;
+}
+
+.deel-float {
+  animation:
+    rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both,
+    float 7s ease-in-out 0.9s infinite;
+}
+
+@keyframes ping {
+  from {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  to {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(1.25rem);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.4rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
